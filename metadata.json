@@ -1,0 +1,5 @@
+{
+  "name": "Agenda Fácil",
+  "description": "Sistema de gestão de consultas particulares com integração ao Google Agenda e formulário de pré-agendamento para pacientes.",
+  "requestFramePermissions": []
+}

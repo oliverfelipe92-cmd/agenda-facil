@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == "oliverfelipe92@gmail.com" && 
+        request.auth.token.email_verified == true
+      );
+    }
+
+    // Patients: Anyone can create (form submission), only admin can read/manage
+    match /patients/{patientId} {
+      allow create: if true; // Public form
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Appointments: Only admin can manage
+    match /appointments/{appointmentId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Blocked Slots: Admin can manage, anyone can read (to avoid scheduling in blocked slots)
+    match /blocked_slots/{slotId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

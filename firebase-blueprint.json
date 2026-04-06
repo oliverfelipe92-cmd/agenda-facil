@@ -1,0 +1,65 @@
+{
+  "entities": {
+    "Patient": {
+      "title": "Patient",
+      "description": "Informações básicas do paciente para pré-agendamento.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Nome completo do paciente" },
+        "birthDate": { "type": "string", "description": "Data de nascimento" },
+        "cpf": { "type": "string", "description": "CPF" },
+        "address": { "type": "string", "description": "Endereço (Rua)" },
+        "city": { "type": "string", "description": "Cidade" },
+        "email": { "type": "string", "format": "email", "description": "E-mail de contato" },
+        "phone": { "type": "string", "description": "Telefone ou WhatsApp" },
+        "patientStatus": { "type": "string", "enum": ["existing", "new"], "description": "Já é paciente ou primeira vez" },
+        "notes": { "type": "string", "description": "Observações ou motivo da consulta" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Data de criação do registro" }
+      },
+      "required": ["name", "email", "phone", "birthDate", "cpf", "address", "city", "patientStatus"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Detalhes da consulta agendada.",
+      "type": "object",
+      "properties": {
+        "patientId": { "type": "string", "description": "ID do paciente associado" },
+        "patientName": { "type": "string", "description": "Nome do paciente (denormalizado)" },
+        "dateTime": { "type": "string", "format": "date-time", "description": "Data e hora da consulta" },
+        "type": { "type": "string", "enum": ["online", "viva", "yara_bezerra"], "description": "Modalidade da consulta (Online, Clínica VIVA ou Clínica YARA BEZERRA)" },
+        "status": { "type": "string", "enum": ["pending", "scheduled", "completed", "cancelled"], "description": "Estado atual do agendamento" },
+        "googleEventId": { "type": "string", "description": "ID do evento no Google Agenda" },
+        "createdBy": { "type": "string", "description": "UID do gestor que criou o agendamento" }
+      },
+      "required": ["patientId", "dateTime", "type", "status"]
+    },
+    "BlockedSlot": {
+      "title": "BlockedSlot",
+      "description": "Horários ou dias bloqueados na agenda.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date", "description": "Data do bloqueio (yyyy-MM-dd)" },
+        "startTime": { "type": "string", "description": "Hora de início (HH:mm)" },
+        "endTime": { "type": "string", "description": "Hora de término (HH:mm)" },
+        "isAllDay": { "type": "boolean", "description": "Se o dia inteiro está bloqueado" },
+        "reason": { "type": "string", "description": "Motivo do bloqueio" },
+        "createdBy": { "type": "string", "description": "UID do gestor que criou o bloqueio" }
+      },
+      "required": ["date", "isAllDay", "createdBy"]
+    }
+  },
+  "firestore": {
+    "/patients": {
+      "schema": "Patient",
+      "description": "Coleção de pacientes que preencheram o formulário."
+    },
+    "/appointments": {
+      "schema": "Appointment",
+      "description": "Coleção de consultas agendadas e pendentes."
+    },
+    "/blocked_slots": {
+      "schema": "BlockedSlot",
+      "description": "Coleção de horários bloqueados pelo administrador."
+    }
+  }
+}
